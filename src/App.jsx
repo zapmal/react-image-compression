@@ -1,9 +1,8 @@
 import { React, useState } from 'react';
-import Card from 'react-bootstrap/Card';
-import Image from'react-bootstrap/Image';
 import Instructions from './components/Instructions';
 import CompressedImage from './components/CompressedImage';
 import CompressButton from './components/CompressButton';
+import UploadImage from './components/UploadImage';
 import imageCompression from 'browser-image-compression';
 
 function App() {
@@ -18,7 +17,7 @@ function App() {
 
   const [status, setStatus] = useState({
     clicked: false,
-    uploadImage: false,
+    isImageUploaded: false,
   });
 
   const handleUpload = e => {
@@ -30,7 +29,7 @@ function App() {
       outputFilename: uploadedFile.name,
       originalSize: Math.floor(uploadedFile.size / 1024)
     });
-    setStatus({...status, uploadImage: true });
+    setStatus({...status, isImageUploaded: true });
   };
 
   const handleCompression = e => {
@@ -43,7 +42,7 @@ function App() {
     };
 
     if (uploadOptions.maxSizeMB > file.originalImage.size / 1024) {
-      alert('My man, upload something better.');
+      alert('The submited file is too small.');
       return 0;
     }
 
@@ -62,43 +61,29 @@ function App() {
     return 1;
   };
 
+  const formatBytes = (bytes, decimals = 2) => {
+    if (bytes === 0) return '0 Bytes';
+
+    const kilobyte = 1024;
+    const hasDecimals = decimals < 0 ? 0: decimals;
+    const sizes = ['Bytes', 'Kb', 'Mb'];
+
+    const index = Math.floor(Math.log(bytes) / Math.log(kilobyte));
+
+    return parseFloat((bytes / Math.pow(kilobyte, index)).toFixed(hasDecimals)) + ' ' + sizes[index];
+  };
+
   return (
     <div className='m-5'>
       <Instructions />
-
       <div className='row mt-5'>
-        <div className='col-xl-4 col-lg-4 col-md-12 col-sm-12'>
-          {/* Default Image Component */}
-          {status.uploadImage ? (
-            <Card>
-              <Image
-                className='ht'
-                variant='top'
-                src={file.originalLink}
-              />
-              <Card body className='text-center'>
-                Estimated file size: {file.originalSize >= 1000 ? file.originalSize + 'Mb' : file.originalSize + 'Kb'}
-              </Card>
-            </Card>
-          ) : (
-            <Card>
-              <Image
-                className='ht'
-                variant='top'
-                src={window.location.origin + '/placeholder.png'} 
-              />
-
-              <Card body className='text-center'>
-                <input
-                  type='file'
-                  accept='image/*'
-                  className='mt-2 btn btn-dark w-75'
-                  onChange={(e) => handleUpload(e)}
-                />
-              </Card>
-            </Card>
-          )}
-        </div>
+        <UploadImage 
+          isImageUploaded={status.isImageUploaded}
+          originalLink={file.originalLink}
+          originalSize={file.originalSize}
+          handleUpload={handleUpload}
+          formatBytes={formatBytes}
+        />
 
         <CompressButton 
           outputFilename={file.outputFilename}
@@ -110,6 +95,7 @@ function App() {
           compressedLink={file.compressedLink}
           compressedSize={file.compressedSize}
           originalSize={file.originalSize}
+          formatBytes={formatBytes}
         />
       </div>
     </div>

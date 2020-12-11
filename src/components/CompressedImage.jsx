@@ -7,6 +7,7 @@ const CompressedImage = (props) => {
     compressedLink,
     compressedSize,
     originalSize, 
+    formatBytes,
   } = props;
 
   const compressedImageTemplate = (
@@ -22,16 +23,10 @@ const CompressedImage = (props) => {
           Download
         </a>
         <p className="mt-2">
-          Compressed file size:{" "}
-          {compressedSize >= 1000
-            ? compressedSize + "Mb"
-            : compressedSize + "Kb"}
+          Compressed file size: {formatBytes(compressedSize)}
         </p>
         <p className="mt-1">
-          Original file size:{" "}
-          {originalSize >= 1000
-            ? originalSize + "Mb"
-            : originalSize + "Kb"}
+          Original file size: {formatBytes(originalSize)}
         </p>
       </Card>
     </Card>
