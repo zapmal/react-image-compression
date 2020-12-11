@@ -1,6 +1,6 @@
 # Image Compressor
 
-Simple image compression using
+Simple image compression app using:
 
 - Bootstrap 4
 - React-Bootstrap
