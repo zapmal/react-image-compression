@@ -1,4 +1,4 @@
-# Image Compressor
+# React Image Compression App
 
 Simple image compression app using:
 

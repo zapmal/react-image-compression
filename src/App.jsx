@@ -1,6 +1,9 @@
 import { React, useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Image from'react-bootstrap/Image';
+import Instructions from './components/Instructions';
+import CompressedImage from './components/CompressedImage';
+import CompressButton from './components/CompressButton';
 import imageCompression from 'browser-image-compression';
 
 function App() {
@@ -10,7 +13,7 @@ function App() {
     originalSize: 0,
     compressedLink: '',
     compressedSize: 0,
-    outputFileName: '',
+    outputFilename: '',
   });
 
   const [status, setStatus] = useState({
@@ -24,13 +27,13 @@ function App() {
       ...file,
       originalLink: URL.createObjectURL(uploadedFile),
       originalImage: uploadedFile,
-      outputFileName: uploadedFile.name,
+      outputFilename: uploadedFile.name,
       originalSize: Math.floor(uploadedFile.size / 1024)
     });
     setStatus({...status, uploadImage: true });
   };
 
-  const handleCompress = e => {
+  const handleCompression = e => {
     e.preventDefault();
     
     const uploadOptions = {
@@ -61,15 +64,7 @@ function App() {
 
   return (
     <div className='m-5'>
-      {/* Instructions Component (no props)*/}
-      <div className='text-light text-center'>
-        <h1>Image Compressor</h1>
-        <div>
-          <h4>- Upload Image</h4>
-          <h4>- Click on Compress</h4>
-          <h4>- Download Compressed Image</h4>
-        </div>
-      </div>
+      <Instructions />
 
       <div className='row mt-5'>
         <div className='col-xl-4 col-lg-4 col-md-12 col-sm-12'>
@@ -105,48 +100,17 @@ function App() {
           )}
         </div>
 
-        {/* Compression button component  */}
-        <div className='col-xl-4 col-lg-4 col-md-12 mb-5 mt-5 col-sm-12 d-flex justify-content-center align-items-baseline'>
-          <br />
-          {file.outputFileName ? (
-            <button
-              type='button'
-              className=' btn btn-dark'
-              onClick={(e) => handleCompress(e)}
-            >
-              Compress
-            </button>
-          ) : (
-            <></>
-          )}
-        </div>
+        <CompressButton 
+          outputFilename={file.outputFilename}
+          handleCompression={handleCompression}
+        />
 
-        {/* CompressedImage Component  */}
-        <div className='col-xl-4 col-lg-4 col-md-12 col-sm-12'>
-          {status.clicked ? (
-            <Card>
-              <Image variant='top' src={file.compressedLink}/>
-
-              <Card body className='text-center'>
-                <a 
-                  href={file.compressedLink} 
-                  download
-                  className='btn btn-dark w-75 mt-2'
-                >
-                  Download
-                </a>
-                <p className='mt-2'> 
-                  Compressed file size: {file.compressedSize >= 1000 ? file.compressedSize + 'Mb' : file.compressedSize + 'Kb'}
-                </p>
-                <p className="mt-1">
-                  Original file size: {file.originalSize >= 1000 ? file.originalSize + 'Mb' : file.originalSize + 'Kb'}
-                </p>
-              </Card>
-            </Card>
-          ) : (
-            <></>
-          )}
-        </div>
+        <CompressedImage 
+          clicked={status.clicked}
+          compressedLink={file.compressedLink}
+          compressedSize={file.compressedSize}
+          originalSize={file.originalSize}
+        />
       </div>
     </div>
   );
